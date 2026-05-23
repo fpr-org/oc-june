@@ -1,0 +1,59 @@
+{
+  "entities": {
+    "Conversion": {
+      "title": "Conversion",
+      "description": "A user's recent conversion history item.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "fromValue": { "type": "string" },
+        "fromUnit": { "type": "string" },
+        "toValue": { "type": "string" },
+        "toUnit": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "fromValue", "fromUnit", "toValue", "toUnit", "timestamp"]
+    },
+    "User": {
+      "title": "User",
+      "description": "User profile data.",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "streakCount": { "type": "number" },
+        "lastActiveDate": { "type": "string" },
+        "gems": { "type": "number" }
+      },
+      "required": ["email"]
+    },
+    "Favorite": {
+      "title": "Favorite",
+      "description": "A user's favorite conversion.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "categoryId": { "type": "string" },
+        "fromUnit": { "type": "string" },
+        "toUnit": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "categoryId", "fromUnit", "toUnit", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "Stores user profile data."
+    },
+    "/users/{userId}/conversions/{conversionId}": {
+      "schema": { "$ref": "#/entities/Conversion" },
+      "description": "Stores a user's conversion history."
+    },
+    "/users/{userId}/favorites/{favoriteId}": {
+      "schema": { "$ref": "#/entities/Favorite" },
+      "description": "Stores a user's favorite conversion pairs."
+    }
+  }
+}

@@ -1,0 +1,103 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Phase 3: Primitive Definition
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+    function isSignedIn() { return request.auth != null; }
+    function isOwner(userId) { return isSignedIn() && request.auth.uid == userId; }
+    function isVerified() { return request.auth.token.email_verified == true; }
+
+    // Validation Blueprint for User
+    function isValidUser(data) {
+      return data.keys().hasAll(['email']) && 
+             data.email is string && data.email.size() <= 200 &&
+             (data.get('displayName', '') is string) && (data.get('displayName', '').size() <= 200) &&
+             (data.get('photoURL', '') is string) && (data.get('photoURL', '').size() <= 1000) &&
+             (data.get('streakCount', 0) is number) && (data.get('streakCount', 0) >= 0) &&
+             (data.get('lastActiveDate', '') is string) && (data.get('lastActiveDate', '').size() <= 50) &&
+             (data.get('gems', 0) is number) && (data.get('gems', 0) >= 0) &&
+             (data.get('lastClaimedChallengeDay', 0) is number) &&
+             (data.get('totalConversions', 0) is number) && (data.get('totalConversions', 0) >= 0) &&
+             (data.get('longestStreak', 0) is number) && (data.get('longestStreak', 0) >= 0) &&
+             (data.get('memberSince', '') is string) && (data.get('memberSince', '').size() <= 40);
+    }
+
+    // Validation Blueprint for Conversion
+    function isValidConversion(data, userId) {
+      return data.keys().hasAll(['userId', 'categoryId', 'fromValue', 'fromUnit', 'toValue', 'toUnit', 'timestamp']) &&
+             data.keys().size() == 7 &&
+             data.userId == userId &&
+             data.categoryId is string && data.categoryId.size() <= 50 &&
+             data.fromValue is string && data.fromValue.size() <= 100 &&
+             data.fromUnit is string && data.fromUnit.size() <= 50 &&
+             data.toValue is string && data.toValue.size() <= 100 &&
+             data.toUnit is string && data.toUnit.size() <= 50 &&
+             data.timestamp == request.time;
+    }
+
+    // Validation Blueprint for Favorite
+    function isValidFavorite(data, userId) {
+      return data.keys().hasAll(['userId', 'categoryId', 'fromUnit', 'toUnit', 'timestamp']) &&
+             data.keys().size() == 5 &&
+             data.userId == userId &&
+             data.categoryId is string && data.categoryId.size() <= 50 &&
+             data.fromUnit is string && data.fromUnit.size() <= 50 &&
+             data.toUnit is string && data.toUnit.size() <= 50 &&
+             data.timestamp == request.time;
+    }
+
+    // Secure the /users collection
+    match /users/{userId} {
+      allow get: if isOwner(userId) && isValidId(userId);
+      allow list: if false; 
+      
+      allow create: if isOwner(userId) && isValidId(userId) && 
+                      isVerified() && isValidUser(incoming()) &&
+                      incoming().keys().hasAll(['email', 'displayName', 'photoURL', 'streakCount', 'lastActiveDate', 'gems']) &&
+                      incoming().keys().size() >= 6 && incoming().keys().size() <= 14;
+                      
+      allow update: if isOwner(userId) && isValidId(userId) && 
+                      isVerified() && isValidUser(incoming()) && (
+        (incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'photoURL'])) ||
+        (incoming().diff(existing()).affectedKeys().hasOnly(['streakCount', 'lastActiveDate'])) ||
+        (incoming().diff(existing()).affectedKeys().hasOnly(['streakCount', 'lastActiveDate', 'longestStreak'])) ||
+        (incoming().diff(existing()).affectedKeys().hasOnly(['gems'])) ||
+        (incoming().diff(existing()).affectedKeys().hasOnly(['gems', 'totalConversions'])) ||
+        (incoming().diff(existing()).affectedKeys().hasOnly(['totalConversions'])) ||
+        (incoming().diff(existing()).affectedKeys().hasOnly(['gems', 'lastClaimedChallengeDay']))
+      );
+      
+      allow delete: if false;
+
+      // Secure the conversions subcollection
+      match /conversions/{conversionId} {
+        allow list: if isOwner(userId) && isValidId(userId);
+        allow get: if isOwner(userId) && isValidId(userId) && isValidId(conversionId);
+        allow create: if isOwner(userId) && isValidId(userId) && isValidId(conversionId) &&
+                      isVerified() && isValidConversion(incoming(), userId);
+        allow update: if false; 
+        allow delete: if isOwner(userId) && isValidId(userId) && isValidId(conversionId);
+      }
+
+      // Secure the favorites subcollection
+      match /favorites/{favoriteId} {
+        allow list: if isOwner(userId) && isValidId(userId);
+        allow get: if isOwner(userId) && isValidId(userId) && isValidId(favoriteId);
+        allow create: if isOwner(userId) && isValidId(userId) && isValidId(favoriteId) &&
+                      isVerified() && isValidFavorite(incoming(), userId);
+        allow update: if false; 
+        allow delete: if isOwner(userId) && isValidId(userId) && isValidId(favoriteId);
+      }
+    }
+  }
+}
