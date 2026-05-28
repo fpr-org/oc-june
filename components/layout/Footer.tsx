@@ -1,8 +1,9 @@
 'use client';
 
-import { Github, Twitter, Mail, ExternalLink, Hexagon } from 'lucide-react';
+import { Github, Twitter, Mail, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
-import { BRAND_TAGLINE, getCopyrightLine, PARTNER_WORLD_INCREDIBLE, THANKS_NEXTJS } from '@/lib/brand';
+import Image from 'next/image';
+import { BRAND_LOGO_SRC, BRAND_NAME, BRAND_TAGLINE, getCopyrightLine, PARTNER_WORLD_INCREDIBLE, THANKS_NEXTJS } from '@/lib/brand';
 import { WorldIncrediblePartner } from '@/components/layout/WorldIncrediblePartner';
 import { NextJsThanks } from '@/components/layout/NextJsThanks';
 
@@ -19,9 +20,13 @@ export default function Footer() {
           {/* Brand Section */}
           <div className="flex flex-col gap-6">
             <Link href="/" className="flex items-center gap-2 group">
-              <div className="flex items-center justify-center w-8 h-8 rounded bg-primary group-hover:bg-primary/90 transition-colors">
-                <Hexagon className="w-5 h-5 text-white fill-white" />
-              </div>
+              <Image
+                src={BRAND_LOGO_SRC}
+                alt={BRAND_NAME}
+                width={32}
+                height={32}
+                className="h-8 w-8 rounded object-cover ring-1 ring-slate-200"
+              />
               <span className="text-lg font-bold text-slate-800 leading-tight">
                 <span className="font-black text-primary">OC</span>
                 <span className="text-slate-600"> — Online Calculator</span>

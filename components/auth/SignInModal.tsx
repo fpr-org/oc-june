@@ -11,8 +11,9 @@ import {
   Gem,
   Loader2,
 } from 'lucide-react';
+import Image from 'next/image';
 import { useAuth } from '@/lib/AuthContext';
-import { BRAND_NAME } from '@/lib/brand';
+import { BRAND_NAME, BRAND_LOGO_SRC } from '@/lib/brand';
 
 function GoogleMark({ className }: { className?: string }) {
   return (
@@ -104,6 +105,13 @@ export default function SignInModal() {
 
         <div className="flex items-start justify-between gap-3 border-b border-slate-100 px-5 pb-4 pt-5 sm:px-6 sm:pt-6">
           <div className="min-w-0">
+            <Image
+              src={BRAND_LOGO_SRC}
+              alt={BRAND_NAME}
+              width={28}
+              height={28}
+              className="mb-2 h-7 w-7 rounded object-cover ring-1 ring-slate-200"
+            />
             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Account</p>
             <h2 id="sign-in-modal-title" className="mt-1 text-xl font-black tracking-tight text-slate-900 sm:text-2xl">
               Welcome to {BRAND_NAME}

@@ -10,6 +10,7 @@ import { hrefFromDeepQuery } from '@/lib/seo/build-converter-href';
 import Link from 'next/link';
 import { SITE_URL, BRAND_NAME } from '@/lib/brand';
 import { buildCategoryToolPageGraph } from '@/lib/seo/json-ld';
+import { buildFaqPageGraph } from '@/lib/seo/faq-jsonld';
 import {
   Calculator,
   CheckCircle2,
@@ -160,6 +161,7 @@ export default async function CategoryPage({
     description: seo.description,
     categoryLabel: categoryData.name,
   });
+  const faqJsonLd = buildFaqPageGraph(seo.faqs);
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col pb-20">
@@ -167,6 +169,11 @@ export default async function CategoryPage({
         type="application/ld+json"
         suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
       {isMathSuite ? (

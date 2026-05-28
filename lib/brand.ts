@@ -14,6 +14,7 @@ export const BRAND_NAME = 'OC - Online Calculator';
 export const BRAND_NAME_SHORT = 'OC';
 
 export const CONTACT_EMAIL = 'info@online-calculators.com';
+export const BRAND_LOGO_SRC = '/brands/online-calculator.png';
 
 /** Site-wide tagline for menus and SEO blurbs. */
 export const BRAND_TAGLINE =

@@ -5,6 +5,8 @@ import { Metadata } from 'next';
 import { BookOpen, Clock } from 'lucide-react';
 import { BRAND_NAME, SITE_URL } from '@/lib/brand';
 import { resolveTimezonePairFromSlug } from '@/lib/seo/resolve-timezone-pair';
+import { buildFaqPageGraph } from '@/lib/seo/faq-jsonld';
+import Link from 'next/link';
 
 export async function generateMetadata({
   params,
@@ -84,9 +86,31 @@ export default async function TimeConverterPage({ params }: { params: Promise<{ 
       snippet: `${fromUnit.name} offset is ${fromUnit.offset} while ${toUnit.name} is ${toUnit.offset} relative to UTC.`,
     },
   };
+  const faqs = [
+    {
+      question: `How many hours is ${fromUnit.symbol} ahead of ${toUnit.symbol}?`,
+      answer: `${fromUnit.symbol} and ${toUnit.symbol} differ by ${timeDiff} hour(s), based on their current UTC offsets.`,
+    },
+    {
+      question: `Can this converter handle daylight saving transitions between ${fromUnit.name} and ${toUnit.name}?`,
+      answer:
+        'Yes. The timezone converter uses timezone definitions and offset logic so users can compare regions more reliably across dates and DST periods.',
+    },
+    {
+      question: `What is the fastest way to compare meeting times between ${fromUnit.name} and ${toUnit.name}?`,
+      answer:
+        'Select the source zone, set your meeting hour once, and read the converted local time in the target zone. The visual day/night context helps avoid off-hours scheduling.',
+    },
+  ];
+  const faqJsonLd = buildFaqPageGraph(faqs);
 
   return (
     <div className="flex flex-col w-full max-w-4xl mx-auto pb-20">
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <MathSuite
         category="timezone"
         categoryData={tzCategory}
@@ -117,6 +141,22 @@ export default async function TimeConverterPage({ params }: { params: Promise<{ 
                 <li key={i}>{step}</li>
               ))}
             </ol>
+          </div>
+        </section>
+
+        <section className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm">
+          <h2 className="text-xl font-bold text-slate-800 mb-5">Timezone conversion FAQ</h2>
+          <div className="space-y-5">
+            {faqs.map((faq) => (
+              <div key={faq.question}>
+                <h3 className="text-base font-bold text-slate-800 mb-1">{faq.question}</h3>
+                <p className="text-sm text-slate-600">{faq.answer}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-6 border-t border-slate-100 pt-4 text-sm text-slate-600">
+            Explore related tools: <Link href="/time-converter" className="text-primary font-semibold hover:underline">Time Converter</Link> and{' '}
+            <Link href="/learn" className="text-primary font-semibold hover:underline">Learn</Link>.
           </div>
         </section>
 

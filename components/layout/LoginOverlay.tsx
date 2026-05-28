@@ -1,8 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/AuthContext';
-import { BRAND_NAME } from '@/lib/brand';
-import { Lock, Hexagon } from 'lucide-react';
+import { BRAND_NAME, BRAND_LOGO_SRC } from '@/lib/brand';
+import { Lock } from 'lucide-react';
+import Image from 'next/image';
 
 export default function LoginOverlay() {
   const { user, loading, openSignInModal } = useAuth();
@@ -62,7 +63,13 @@ export default function LoginOverlay() {
     <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 flex flex-col items-center text-center animate-in fade-in zoom-in duration-300">
         <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-100 mb-6">
-          <Hexagon className="w-8 h-8 text-primary fill-primary" />
+          <Image
+            src={BRAND_LOGO_SRC}
+            alt={BRAND_NAME}
+            width={40}
+            height={40}
+            className="h-10 w-10 rounded object-cover"
+          />
         </div>
         <h2 className="text-2xl font-extrabold text-slate-800 mb-2">Time&apos;s up!</h2>
         <p className="text-slate-500 font-medium mb-8">

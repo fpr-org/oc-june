@@ -16,7 +16,6 @@ import {
   Zap,
   Calculator,
   LayoutGrid,
-  Hexagon,
   ChevronRight,
   User,
   HelpCircle,
@@ -40,7 +39,7 @@ import { useUI } from '@/lib/UIContext';
 import { useAuth } from '@/lib/AuthContext';
 import { converterCategories } from '@/lib/units';
 import type { LucideIcon } from 'lucide-react';
-import { BRAND_NAME, CONTACT_EMAIL, getCopyrightLine } from '@/lib/brand';
+import { BRAND_NAME, BRAND_LOGO_SRC, CONTACT_EMAIL, getCopyrightLine } from '@/lib/brand';
 import { WorldIncrediblePartner } from '@/components/layout/WorldIncrediblePartner';
 import { NextJsThanks } from '@/components/layout/NextJsThanks';
 
@@ -135,9 +134,14 @@ export default function MobileMenu() {
                   onClick={closeMenu}
                   className="group flex min-w-0 flex-1 items-center gap-2"
                 >
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary shadow-md shadow-blue-500/20">
-                    <Hexagon className="h-5 w-5 fill-white text-white" aria-hidden />
-                  </div>
+                  <Image
+                    src={BRAND_LOGO_SRC}
+                    alt={BRAND_NAME}
+                    width={32}
+                    height={32}
+                    className="h-8 w-8 shrink-0 rounded-lg object-cover ring-1 ring-slate-200"
+                    priority
+                  />
                   <div className="min-w-0 text-left">
                     <span className="block truncate text-sm font-black leading-tight tracking-tight text-slate-800">
                       {BRAND_NAME}

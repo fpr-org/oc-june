@@ -1,6 +1,6 @@
 'use client';
 
-import { Hexagon, ChevronDown, Star, Clock, Target, BookOpen, Flame, Gem, Plus, User, LogOut, Search, Calendar, ChevronRight, Globe } from 'lucide-react';
+import { ChevronDown, Star, Clock, Target, BookOpen, Flame, Gem, Plus, User, LogOut, Search, Calendar, ChevronRight, Globe } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
 import { useUI } from '@/lib/UIContext';
 import Image from 'next/image';
@@ -9,7 +9,7 @@ import { getDailyChallenge, converterCategories, getCategoryById } from '@/lib/u
 import { useMemo, useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import StatusBanner from '@/components/gamification/StatusBanner';
-import { BRAND_NAME_SHORT, SITE_URL } from '@/lib/brand';
+import { BRAND_NAME, SITE_URL, BRAND_LOGO_SRC } from '@/lib/brand';
 import { buildSiteNavigationItemList } from '@/lib/seo/json-ld';
 
 export default function Header() {
@@ -105,11 +105,16 @@ export default function Header() {
       <div className="flex items-center justify-between px-6 py-4">
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="flex items-center justify-center w-8 h-8 rounded bg-primary group-hover:bg-primary/90 transition-colors">
-              <Hexagon className="w-5 h-5 text-white fill-white" />
-            </div>
+            <Image
+              src={BRAND_LOGO_SRC}
+              alt={BRAND_NAME}
+              width={32}
+              height={32}
+              className="h-8 w-8 rounded object-cover ring-1 ring-slate-200"
+              priority
+            />
             <h1 className="text-xl font-bold text-slate-800">
-              <span className="font-black text-primary">{BRAND_NAME_SHORT}</span>
+              <span className="font-black text-primary">OC</span>
               <span className="font-semibold text-slate-700"> — Online Calculator</span>
             </h1>
           </Link>

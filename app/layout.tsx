@@ -16,7 +16,7 @@ import TopLoadingBar from '@/components/layout/TopLoadingBar';
 import CookieConsentBanner from '@/components/layout/CookieConsentBanner';
 import { UIProvider } from '@/lib/UIContext';
 import { Suspense } from 'react';
-import { BRAND_NAME, SITE_URL, BRAND_TAGLINE } from '@/lib/brand';
+import { BRAND_LOGO_SRC, BRAND_NAME, SITE_URL, BRAND_TAGLINE } from '@/lib/brand';
 
 export const metadata: Metadata = {
   title: {
@@ -31,6 +31,13 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   alternates: {
     canonical: '/',
+  },
+  icons: {
+    icon: [
+      { url: BRAND_LOGO_SRC, type: 'image/png' },
+    ],
+    shortcut: [BRAND_LOGO_SRC],
+    apple: [BRAND_LOGO_SRC],
   },
   openGraph: {
     type: 'website',

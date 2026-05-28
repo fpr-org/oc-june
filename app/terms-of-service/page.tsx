@@ -1,18 +1,41 @@
 import { Metadata } from 'next';
 import { BRAND_NAME } from '@/lib/brand';
+import Link from 'next/link';
+import { buildFaqPageGraph } from '@/lib/seo/faq-jsonld';
 
 export const metadata: Metadata = {
   title: 'Terms of Service',
   description: `Review the terms and conditions for using ${BRAND_NAME}.`,
 };
 
-export default function TermsOfServicePage() {
-  return (
-    <div className="max-w-4xl mx-auto w-full bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-sm">
-      <h1 className="text-3xl font-black text-slate-800 mb-2">Terms of Service</h1>
-      <p className="text-sm text-slate-500 mb-8">Last updated: May 1, 2026</p>
+const faqs = [
+  {
+    question: 'Are calculator results guaranteed for legal or medical decisions?',
+    answer:
+      'No. Outputs are for general informational use and should be independently verified for legal, medical, safety, and mission-critical decisions.',
+  },
+  {
+    question: 'Can terms change over time?',
+    answer:
+      'Yes. We may update terms to reflect product, legal, and security changes. Continued use of the service implies acceptance of current terms.',
+  },
+];
 
-      <div className="space-y-6 text-slate-700 text-sm leading-relaxed">
+export default function TermsOfServicePage() {
+  const faqGraph = buildFaqPageGraph(faqs);
+
+  return (
+    <div className="max-w-4xl mx-auto w-full flex flex-col gap-6">
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqGraph) }}
+      />
+      <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-sm">
+        <h1 className="text-3xl font-black text-slate-800 mb-2">Terms of Service</h1>
+        <p className="text-sm text-slate-500 mb-8">Last updated: May 1, 2026</p>
+
+        <div className="space-y-6 text-slate-700 text-sm leading-relaxed">
         <section>
           <h2 className="text-lg font-bold text-slate-800 mb-2">1. Acceptance of Terms</h2>
           <p>
@@ -54,7 +77,22 @@ export default function TermsOfServicePage() {
             To the fullest extent permitted by law, {BRAND_NAME} is not liable for indirect or consequential damages arising from service use.
           </p>
         </section>
+        </div>
       </div>
+      <section className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+        <h2 className="text-xl font-bold text-slate-800 mb-4">Terms FAQ</h2>
+        <div className="space-y-4">
+          {faqs.map((faq) => (
+            <div key={faq.question}>
+              <h3 className="text-base font-bold text-slate-800">{faq.question}</h3>
+              <p className="text-sm text-slate-600 mt-1">{faq.answer}</p>
+            </div>
+          ))}
+        </div>
+        <p className="mt-4 text-sm text-slate-600">
+          Also review <Link href="/privacy-policy" className="text-primary font-semibold hover:underline">Privacy Policy</Link>.
+        </p>
+      </section>
     </div>
   );
 }

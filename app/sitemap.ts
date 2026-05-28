@@ -64,44 +64,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  const timeZonePairUrls: MetadataRoute.Sitemap = [
-    {
-      url: `${baseUrl}/time/utc-to-india`,
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/time/usa-eastern-to-india`,
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/time/usa-eastern-to-united-kingdom`,
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/time/japan-to-china`,
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/time/india-to-australia-sydney`,
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/time/united-kingdom-to-usa-pacific`,
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 0.7,
+  const timezoneCategory = converterCategories.find((category) => category.id === 'timezone');
+  const timezoneUnits = timezoneCategory?.units ?? [];
+  const timeZonePairUrls: MetadataRoute.Sitemap = [];
+
+  for (const fromUnit of timezoneUnits) {
+    for (const toUnit of timezoneUnits) {
+      if (fromUnit.id === toUnit.id) continue;
+
+      timeZonePairUrls.push({
+        url: `${baseUrl}/time/${fromUnit.id}-to-${toUnit.id}`,
+        lastModified: now,
+        changeFrequency: 'weekly',
+        priority: 0.7,
+      });
     }
-  ];
+  }
 
   return [...staticUrls, ...categoryUrls, ...timeZonePairUrls];
 }
